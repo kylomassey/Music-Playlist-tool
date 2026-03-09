@@ -51,7 +51,7 @@ class Playlist:
             print(f"{cnt}) {song.name}")
             cnt += 1
 
-    def filter(self, genre = None, artist = None, album = None):
+    def filter(self, genre = None, artist = None, album = None, min_bpm = None, max_bpm = None, rating = None):
         results = []
         for song in self.songs:
             if genre is not None and genre.lower() != song.genre.lower():
@@ -60,5 +60,12 @@ class Playlist:
                 continue
             if album is not None and album.lower() not in song.album.lower():
                 continue
+            if min_bpm is not None and song.bpm < min_bpm:
+                continue
+            if max_bpm is not None and song.bpm > max_bpm:
+                continue
+            if rating is not None and song.rating < rating:
+                continue
+            
             results.append(song)
         return results
