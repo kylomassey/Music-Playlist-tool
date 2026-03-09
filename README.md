@@ -7,7 +7,8 @@ A simple Python command-line project for modeling songs and playlists.
 - Convert track durations to seconds
 - Compute total playlist duration
 - Print playlist contents
-- Filter songs by genre, artist, or album
+- Filter songs by genre, artist, or album, min_bpm, max_bpm, min_rating
+- Type validation for input
 
 ## Files
 - `main.py` - entry point
