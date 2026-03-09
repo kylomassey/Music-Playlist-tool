@@ -42,12 +42,12 @@ class Playlist:
         self.totaltime = time
         return format_duration(time)
     
-    def print_songs(self, list = None):
+    def print_songs(self, songs = None):
         cnt = 1
-        if not list:
-            list = self.songs
+        if not songs:
+            songs = self.songs
         print("\nYour Playlist")
-        for song in list:
+        for song in songs:
             print(f"{cnt}) {song.name}")
             cnt += 1
 
@@ -61,4 +61,4 @@ class Playlist:
             if album is not None and album.lower() not in song.album.lower():
                 continue
             results.append(song)
-        self.print_songs(results)
+        return results
