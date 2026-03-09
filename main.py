@@ -12,7 +12,7 @@ def main():
     mysongs.add_song(song3)
     print(mysongs.duration())
     mysongs.print_songs()
-    filtered_songs = mysongs.filter(genre = "rock", album = "Vag", rating = 1)
+    filtered_songs = mysongs.filter(genre = "rock", album = "Vag", min_rating = 3)
     if filtered_songs:
         mysongs.print_songs(filtered_songs)
 

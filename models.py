@@ -1,4 +1,4 @@
-from utils import format_duration
+from utils import format_duration, validate_number, validate_str
 
 class Song:
     def __init__(self, name, artist, album, year,
@@ -51,8 +51,23 @@ class Playlist:
             print(f"{cnt}) {song.name}")
             cnt += 1
 
-    def filter(self, genre = None, artist = None, album = None, min_bpm = None, max_bpm = None, rating = None):
+    def filter(self, genre = None, artist = None, album = None, min_bpm = None, max_bpm = None, min_rating = None):
         results = []
+
+        validate_str(genre, "genre")
+        validate_str(artist, "artist")
+        validate_str(album, "album")
+
+        validate_number(min_bpm, "min_bpm")
+        validate_number(max_bpm, "max_bpm")
+        validate_number(min_rating, "min_rating")
+
+        if min_bpm is not None and max_bpm is not None and max_bpm < min_bpm:
+            raise ValueError("min_bpm must be less than or equal to max_bpm")
+        
+        if min_rating is not None and not (0 <= min_rating <= 5):
+            raise ValueError("min_rating must be greater than or equal to zero and less than or equal to 5")
+
         for song in self.songs:
             if genre is not None and genre.lower() != song.genre.lower():
                 continue
@@ -64,8 +79,8 @@ class Playlist:
                 continue
             if max_bpm is not None and song.bpm > max_bpm:
                 continue
-            if rating is not None and song.rating < rating:
+            if min_rating is not None and song.rating < min_rating:
                 continue
-            
+
             results.append(song)
         return results
