@@ -13,14 +13,24 @@ def validate_number (value, name):
     if value is not None and not isinstance(value, (int, float)):
         raise TypeError(f"{name} must be a number or None")
     
-def to_json(data, filename= "data"):
-    with open(f"{filename}.json", "w") as f:
+def to_json(data, filename= "data.json"):
+    with open(f"{filename}", "w", encoding= "utf-8") as f:
         json.dump(data, f)
 
-def json_to_data(filename= "data"):
+def json_to_data(filename= "data.json"):
     try:
-        with open(f"{filename}.json", "r") as f:
+        with open(f"{filename}", "r", encoding= "utf-8") as f:
             data = json.load(f)
-        return data
-    except:
-        raise FileNotFoundError(f"{filename}.json does not exist")
+    except FileNotFoundError as exc:
+        raise FileNotFoundError(f"{filename} does not exist") from exc
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Invalid JSON in file: {filename}") from exc
+    
+    if not isinstance(data, dict):
+        raise ValueError("Playlist JSON must contain an object.")
+    if "songs" not in data or data["songs"] is None:
+        raise ValueError("Playlist songs are required.")
+    if not isinstance(data["songs"], list):
+        raise ValueError("Playlist songs must be a list.")
+    
+    return data

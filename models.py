@@ -1,7 +1,7 @@
 from utils import format_duration, validate_number, validate_str
 
 class Song:
-    def __init__(self, name = None, artist= None, album= None, year= None,
+    def __init__(self, name= None, artist= None, album= None, year= None,
                  bpm= None, genre= None, rating= None, minutes = 0, seconds = 0):
         self.name = name
         self.artist = artist
@@ -12,10 +12,14 @@ class Song:
         self.bpm = bpm
         self.rating = rating
         self.genre = genre
-
-    def from_dict(self, data):
-        if data["name"] is not None:
-            validate_str(data["name"], "name")
+    
+    @classmethod
+    def from_dict(cls, data):
+        if "name" not in data:
+            raise ValueError("Missing required field: name")
+        if data["name"] is None:
+            raise ValueError("name is required")
+        validate_str(data["name"], "name")
         if data["genre"] is not None:
             validate_str(data["genre"], "genre")
         if data["artist"] is not None:
@@ -45,15 +49,17 @@ class Song:
         if data["bpm"] is not None and (data["bpm"] <= 0):
             raise ValueError("bpm must be greater than zero")
 
-        self.name= data["name"]
-        self.artist= data["artist"]
-        self.album= data["album"]
-        self.year= data["year"]
-        self.bpm= data["bpm"]
-        self.genre= data["genre"]
-        self.rating= data["rating"]
-        self.minutes= data["minutes"]
-        self.seconds= data["seconds"]
+        return cls(
+        name= data["name"],
+        artist= data["artist"],
+        album= data["album"],
+        year= data["year"],
+        bpm= data["bpm"],
+        genre= data["genre"],
+        rating= data["rating"],
+        minutes= data["minutes"],
+        seconds= data["seconds"]
+        )
 
     def to_dict(self):
         data = {"name":self.name,
@@ -76,8 +82,11 @@ class Song:
              " | Rating: ", self.rating)
 
 class Playlist:
-    def __init__(self):
-        self.songs  = []
+    def __init__(self, songs = None):
+        if songs is None:
+            self.songs = []
+        else:
+            self.songs = songs
         self.totaltime = 0
 
     def add_song(self, song):
@@ -94,18 +103,20 @@ class Playlist:
     
     def print_songs(self, songs = None):
         cnt = 1
-        if not songs:
+        if songs is None:
             songs = self.songs
         print("\nYour Playlist")
         for song in songs:
             print(f"{cnt}) {song.name}")
             cnt += 1
     
-    def from_dict(self, data):
+    @classmethod
+    def from_dict(cls, data):
+        songlist = []
         for song in data["songs"]:
-            newsong = Song()
-            newsong.from_dict(song)
-            self.add_song(newsong)
+            newsong= Song.from_dict(song)
+            songlist.append(newsong)
+        return cls(songs= songlist)
 
     def to_dict(self):
         playlist_data = []

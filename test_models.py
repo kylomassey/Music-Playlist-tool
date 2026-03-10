@@ -1,4 +1,5 @@
 import pytest
+import json
 from models import Song, Playlist
 from utils import to_json, json_to_data
 
@@ -58,7 +59,7 @@ def make_playlist():
             seconds=24
         )
     )
-
+    playlist.print_songs
     return playlist
 
 def test_filter_by_genre():
@@ -124,8 +125,7 @@ def test_invalid_min_bpm_type():
         playlist.filter(min_bpm="fast")
 
 def test_dict_to_song():
-    mysong = Song()
-    mysong.from_dict(song_data)
+    mysong = Song.from_dict(song_data)
     data = song_info.to_dict()
 
     assert mysong.artist == song_info.artist
@@ -145,8 +145,7 @@ def test_json_roundtrip():
     info = playlist.to_dict()
     to_json(data= info, filename= file)
     new_info = json_to_data(filename= file)
-    newplaylist = Playlist()
-    newplaylist.from_dict(new_info)
+    newplaylist = Playlist.from_dict(new_info)
 
     assert len(newplaylist.songs) == len(playlist.songs)
     for original_song, loaded_song in zip(playlist.songs, newplaylist.songs):
@@ -163,3 +162,62 @@ def test_json_roundtrip():
 def test_invalid_json_filename():
     with pytest.raises(FileNotFoundError):
         json_to_data("RANDOM FILE NAME")
+
+def test_song_from_dict_rejects_missing_name():
+    data = {
+        "artist": "Daft Punk",
+        "genre": "Electronic",
+        "bpm": 123,
+        "rating": 5,
+    }
+
+    with pytest.raises(ValueError, match="Missing required field: name"):
+        Song.from_dict(data)
+
+
+def test_song_from_dict_rejects_none_name():
+    data = {
+        "name": None,
+        "artist": "Daft Punk",
+        "genre": "Electronic",
+        "bpm": 123,
+        "rating": 5,
+    }
+
+    with pytest.raises(ValueError, match="name is required"):
+        Song.from_dict(data)
+
+
+def test_load_from_json_missing_file():
+    with pytest.raises(FileNotFoundError):
+        json_to_data("does_not_exist.json")
+
+
+def test_load_from_json_malformed_json(tmp_path):
+    bad_file = tmp_path / "bad.json"
+    bad_file.write_text("{ not valid json }", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Invalid JSON"):
+        json_to_data(bad_file)
+
+
+def test_load_from_json_missing_song_field(tmp_path):
+    bad_data = {
+        "name": "Road Trip",
+        "songs": [
+            {
+                "name": "Levitating",
+                "artist": None,
+                "genre": "Pop",
+                "bpm": 103,
+                "rating": 4,
+            }
+        ],
+    }
+
+    file_path = tmp_path / "playlist.json"
+    file_path.write_text(json.dumps(bad_data), encoding="utf-8")
+
+    with pytest.raises(ValueError, match= "Missing required field: name"):
+        info = json_to_data(filename= file_path)
+        Playlist.from_dict(data= info)
