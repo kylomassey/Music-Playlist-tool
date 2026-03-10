@@ -147,4 +147,14 @@ def test_json_roundtrip():
     newplaylist = Playlist()
     newplaylist.from_dict(new_info)
 
-    assert newplaylist.songs[0].name == playlist.songs[0].name
+    assert len(newplaylist.songs) == len(playlist.songs)
+    for original_song, loaded_song in zip(playlist.songs, newplaylist.songs):
+        assert loaded_song.name == original_song.name
+        assert loaded_song.artist == original_song.artist
+        assert loaded_song.album == original_song.album
+        assert loaded_song.genre == original_song.genre
+        assert loaded_song.bpm == original_song.bpm
+        assert loaded_song.rating == original_song.rating
+        assert loaded_song.minutes == original_song.minutes
+        assert loaded_song.seconds == original_song.seconds
+        assert loaded_song.year == original_song.year
