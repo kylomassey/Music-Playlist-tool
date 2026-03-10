@@ -15,8 +15,10 @@ class Song:
     
     @classmethod
     def from_dict(cls, data):
-        if "name" not in data:
-            raise ValueError("Missing required field: name")
+        fields = ["name"]
+        for field in fields:
+            if field not in data:
+                raise ValueError(f"Missing required field: {field}")
         if data["name"] is None:
             raise ValueError("name is required")
         validate_str(data["name"], "name")
@@ -113,6 +115,14 @@ class Playlist:
     @classmethod
     def from_dict(cls, data):
         songlist = []
+
+        if not isinstance(data, dict):
+            raise ValueError("Playlist JSON must contain an object.")
+        if "songs" not in data or data["songs"] is None:
+            raise ValueError("Playlist songs are required.")
+        if not isinstance(data["songs"], list):
+            raise ValueError("Playlist songs must be a list.")
+
         for song in data["songs"]:
             newsong= Song.from_dict(song)
             songlist.append(newsong)

@@ -26,11 +26,4 @@ def json_to_data(filename= "data.json"):
     except json.JSONDecodeError as exc:
         raise ValueError(f"Invalid JSON in file: {filename}") from exc
     
-    if not isinstance(data, dict):
-        raise ValueError("Playlist JSON must contain an object.")
-    if "songs" not in data or data["songs"] is None:
-        raise ValueError("Playlist songs are required.")
-    if not isinstance(data["songs"], list):
-        raise ValueError("Playlist songs must be a list.")
-    
     return data
