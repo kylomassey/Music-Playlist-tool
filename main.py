@@ -1,5 +1,4 @@
 from models import Song, Playlist
-from utils import format_duration
 
 def main():
     print("Music Playlist Tool")

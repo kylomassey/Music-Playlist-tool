@@ -13,6 +13,14 @@ class Song:
         self.rating = rating
         self.genre = genre
 
+    def song_to_dict(self):
+        data = {"name":self.name,
+                "artist":self.artist, "album":self.album,
+                "year":self.year, "minutes":self.minutes,
+                "seconds":self.seconds, "bpm":self.bpm,
+                "rating":self.rating, "genre":self.genre}
+        return data
+
     def set_track_time(self, minutes, seconds):
         self.minutes = minutes
         self.seconds = seconds
