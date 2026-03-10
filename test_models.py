@@ -1,6 +1,6 @@
 import pytest
 from models import Song, Playlist
-from utils import dict_to_song, to_json, json_to_data
+from utils import to_json, json_to_data
 
 song_data = {"name":"Blinding Lights",
                 "artist":"The Weeknd", "album":"After Hours",
@@ -159,3 +159,7 @@ def test_json_roundtrip():
         assert loaded_song.minutes == original_song.minutes
         assert loaded_song.seconds == original_song.seconds
         assert loaded_song.year == original_song.year
+
+def test_invalid_json_filename():
+    with pytest.raises(FileNotFoundError):
+        json_to_data("RANDOM FILE NAME")

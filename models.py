@@ -1,4 +1,4 @@
-from utils import format_duration, validate_number, validate_str, dict_to_song
+from utils import format_duration, validate_number, validate_str
 
 class Song:
     def __init__(self, name = None, artist= None, album= None, year= None,
@@ -14,6 +14,37 @@ class Song:
         self.genre = genre
 
     def from_dict(self, data):
+        if data["name"] is not None:
+            validate_str(data["name"], "name")
+        if data["genre"] is not None:
+            validate_str(data["genre"], "genre")
+        if data["artist"] is not None:
+            validate_str(data["artist"], "artist")
+        if data["album"] is not None:
+            validate_str(data["album"], "album")
+
+        if data["bpm"] is not None:
+            validate_number(data["bpm"], "bpm")
+        if data["rating"] is not None:
+            validate_number(data["rating"], "rating")
+        if data["year"] is not None:
+            validate_number(data["year"], "year")
+        if data["minutes"] is not None:
+            validate_number(data["minutes"], "minutes")
+        if data["seconds"] is not None:
+            validate_number(data["seconds"], "seconds")
+
+        if data["rating"] is not None and not (0 <= data["rating"] <= 5):
+            raise ValueError("rating must be greater than or equal to zero and less than or equal to 5")
+        if data["minutes"] is not None and (data["minutes"] < 0):
+            raise ValueError("minutes can't be a negative nubmer")
+        if data["seconds"] is not None and not (0 <= data["seconds"] < 60):
+            raise ValueError("seconds must be greater than or equal to zero and less than 60")
+        if data["year"] is not None and (data["year"] <= 0):
+            raise ValueError("year must be greater than zero")
+        if data["bpm"] is not None and (data["bpm"] <= 0):
+            raise ValueError("bpm must be greater than zero")
+
         self.name= data["name"]
         self.artist= data["artist"]
         self.album= data["album"]
@@ -72,8 +103,9 @@ class Playlist:
     
     def from_dict(self, data):
         for song in data["songs"]:
-            self.add_song(dict_to_song(song))
-
+            newsong = Song()
+            newsong.from_dict(song)
+            self.add_song(newsong)
 
     def to_dict(self):
         playlist_data = []
@@ -81,12 +113,13 @@ class Playlist:
             playlist_data.append(song.to_dict())
         return {"songs": playlist_data}
 
-    def filter(self, genre = None, artist = None, album = None, min_bpm = None, max_bpm = None, min_rating = None):
+    def filter(self, name= None, genre = None, artist = None, album = None, min_bpm = None, max_bpm = None, min_rating = None):
         results = []
 
         validate_str(genre, "genre")
         validate_str(artist, "artist")
         validate_str(album, "album")
+        validate_str(name, "name")
 
         validate_number(min_bpm, "min_bpm")
         validate_number(max_bpm, "max_bpm")
@@ -99,6 +132,8 @@ class Playlist:
             raise ValueError("min_rating must be greater than or equal to zero and less than or equal to 5")
 
         for song in self.songs:
+            if name is not None and name.lower() not in song.name.lower():
+                continue
             if genre is not None and genre.lower() != song.genre.lower():
                 continue
             if artist is not None and artist.lower() not in song.artist.lower():
