@@ -1,6 +1,6 @@
 import pytest
 from models import Song, Playlist
-from utils import dict_to_song
+from utils import dict_to_song, to_json, json_to_data
 
 song_data = {"name":"Blinding Lights",
                 "artist":"The Weeknd", "album":"After Hours",
@@ -136,3 +136,15 @@ def test_dict_to_song():
     assert mysong.minutes == song_info.minutes
     assert mysong.seconds == song_info.seconds
     assert data == song_data
+
+def test_json_roundtrip():
+    playlist = make_playlist()
+    file = "test"
+
+    info = playlist.to_dict()
+    to_json(data= info, filename= file)
+    new_info = json_to_data(filename= file)
+    newplaylist = Playlist()
+    newplaylist.from_dict(new_info)
+
+    assert newplaylist.songs[0].name == playlist.songs[0].name

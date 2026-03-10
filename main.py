@@ -20,7 +20,7 @@ def main():
     print(json_to_data())
     newplaylist = Playlist()
     info = json_to_data()
-    newplaylist.import_playlist(data= info)
+    newplaylist.from_dict(data= info)
     newplaylist.print_songs()
 
     filtered_songs = mysongs.filter(genre = "rock", album = "Vag", min_rating = 3)

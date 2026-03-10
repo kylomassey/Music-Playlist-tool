@@ -59,7 +59,7 @@ class Playlist:
             print(f"{cnt}) {song.name}")
             cnt += 1
     
-    def import_playlist(self, data):
+    def from_dict(self, data):
         for song in data["songs"]:
             self.add_song(dict_to_song(song))
 
