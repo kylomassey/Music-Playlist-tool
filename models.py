@@ -13,7 +13,18 @@ class Song:
         self.rating = rating
         self.genre = genre
 
-    def song_to_dict(self):
+    def from_dict(self, data):
+        self.name= data["name"]
+        self.artist= data["artist"]
+        self.album= data["album"]
+        self.year= data["year"]
+        self.bpm= data["bpm"]
+        self.genre= data["genre"]
+        self.rating= data["rating"]
+        self.minutes= data["minutes"]
+        self.seconds= data["seconds"]
+
+    def to_dict(self):
         data = {"name":self.name,
                 "artist":self.artist, "album":self.album,
                 "year":self.year, "minutes":self.minutes,
@@ -67,7 +78,7 @@ class Playlist:
     def to_dict(self):
         playlist_data = []
         for song in self.songs:
-            playlist_data.append(song.song_to_dict())
+            playlist_data.append(song.to_dict())
         return {"songs": playlist_data}
 
     def filter(self, genre = None, artist = None, album = None, min_bpm = None, max_bpm = None, min_rating = None):

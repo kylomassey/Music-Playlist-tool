@@ -124,8 +124,9 @@ def test_invalid_min_bpm_type():
         playlist.filter(min_bpm="fast")
 
 def test_dict_to_song():
-    mysong = dict_to_song(song_data)
-    data = song_info.song_to_dict()
+    mysong = Song()
+    mysong.from_dict(song_data)
+    data = song_info.to_dict()
 
     assert mysong.artist == song_info.artist
     assert mysong.album == song_info.album
