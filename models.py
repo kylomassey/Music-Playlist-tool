@@ -1,8 +1,8 @@
-from utils import format_duration, validate_number, validate_str
+from utils import format_duration, validate_number, validate_str, dict_to_song
 
 class Song:
-    def __init__(self, name, artist, album, year,
-                 bpm, genre, rating, minutes = 0, seconds = 0):
+    def __init__(self, name = None, artist= None, album= None, year= None,
+                 bpm= None, genre= None, rating= None, minutes = 0, seconds = 0):
         self.name = name
         self.artist = artist
         self.album = album
@@ -58,6 +58,17 @@ class Playlist:
         for song in songs:
             print(f"{cnt}) {song.name}")
             cnt += 1
+    
+    def import_playlist(self, data):
+        for song in data["songs"]:
+            self.add_song(dict_to_song(song))
+
+
+    def to_dict(self):
+        playlist_data = []
+        for song in self.songs:
+            playlist_data.append(song.song_to_dict())
+        return {"songs": playlist_data}
 
     def filter(self, genre = None, artist = None, album = None, min_bpm = None, max_bpm = None, min_rating = None):
         results = []

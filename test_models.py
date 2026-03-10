@@ -1,5 +1,18 @@
 import pytest
 from models import Song, Playlist
+from utils import dict_to_song
+
+song_data = {"name":"Blinding Lights",
+                "artist":"The Weeknd", "album":"After Hours",
+                "year":2020, "minutes":3,
+                "seconds":20, "bpm":171,
+                "rating":5, "genre":"Pop"}
+song_info = Song(
+            name="Blinding Lights", artist="The Weeknd",
+            album="After Hours", year=2020,
+            bpm=171, genre="Pop",
+            rating=5, minutes=3,
+            seconds=20)
 
 def make_playlist():
     playlist = Playlist()
@@ -14,7 +27,7 @@ def make_playlist():
             genre="Pop",
             rating=5,
             minutes=3,
-            seconds=20,
+            seconds=20
         )
     )
 
@@ -28,7 +41,7 @@ def make_playlist():
             genre="Pop",
             rating=4,
             minutes=3,
-            seconds=23,
+            seconds=23
         )
     )
 
@@ -42,7 +55,7 @@ def make_playlist():
             genre="Jazz",
             rating=5,
             minutes=5,
-            seconds=24,
+            seconds=24
         )
     )
 
@@ -109,3 +122,17 @@ def test_invalid_min_bpm_type():
 
     with pytest.raises(TypeError):
         playlist.filter(min_bpm="fast")
+
+def test_dict_to_song():
+    mysong = dict_to_song(song_data)
+    data = song_info.song_to_dict()
+
+    assert mysong.artist == song_info.artist
+    assert mysong.album == song_info.album
+    assert mysong.name == song_info.name
+    assert mysong.genre == song_info.genre
+    assert mysong.year == song_info.year
+    assert mysong.rating == song_info.rating
+    assert mysong.minutes == song_info.minutes
+    assert mysong.seconds == song_info.seconds
+    assert data == song_data
